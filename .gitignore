@@ -9,3 +9,6 @@
 
 # Java class files
 *.class
+
+# Virtual environment files
+venv/
