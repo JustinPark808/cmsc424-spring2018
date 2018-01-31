@@ -1,3 +1,6 @@
+### Justin Park (112184933)
+### CMSC132 Sec. 
+
 queries = ["" for i in range(0, 11)]
 
 ### 0. List all airport codes and their cities. Order by the city name in the increasing order. 
@@ -14,7 +17,11 @@ order by city;
 ### Order: by name
 ### Output columns: name 
 queries[1] = """
-select 0;
+select name
+from customers
+where birthdate > date '1990-01-01' 
+and name ~ ' G'
+order by name;
 """
 
 
