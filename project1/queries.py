@@ -30,7 +30,7 @@ order by name;
 ### Order: by name 
 ### Output columns: all columns from customers
 queries[2] = """
-select 0;
+select *;
 """
 
 ### 3. Write a query to find number of inbound flights by each airlines to any airport 
