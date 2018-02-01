@@ -7,9 +7,9 @@ queries = ["" for i in range(0, 11)]
 ### Output column order: airportid, city
 
 queries[0] = """
-select airportid, city 
-from airports
-order by city;
+SELECT  airportid, city 
+FROM    airports
+ORDER BY city;
 """
 
 ### 1. Write a query to find the names of the customers who were born after 1990-01-01, and the family name starts with 'G'
@@ -17,20 +17,30 @@ order by city;
 ### Order: by name
 ### Output columns: name 
 queries[1] = """
-select name
-from customers
-where birthdate > date '1990-01-01' 
-and name ~ ' G'
-order by name;
+SELECT  name
+FROM    customers
+WHERE   birthdate > date '1990-01-01' 
+AND     name ~ ' G'
+ORDER BY name;
 """
-
 
 ### 2. Write a query to find unique customers who flew on the dates within one week before their birthday.
 ### Hint: See postgresql date functions and distinct operator
 ### Order: by name 
 ### Output columns: all columns from customers
 queries[2] = """
-select *;
+WITH    customer_flights AS (
+            SELECT *
+            FROM customers NATURAL JOIN flewon
+        )
+SELECT  DISTINCT customerid,
+        name,
+        birthdate,
+        frequentflieron
+FROM    customer_flights
+WHERE   EXTRACT(MONTH FROM age(flightdate + time '00:00', birthdate + time '00:00')) = 11
+AND     EXTRACT(DAY FROM age(flightdate + time '00:00', birthdate + time '00:00')) >= 24
+ORDER BY name;
 """
 
 ### 3. Write a query to find number of inbound flights by each airline to any airport 
