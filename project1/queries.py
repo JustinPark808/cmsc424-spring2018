@@ -30,7 +30,7 @@ ORDER BY name;
 ### Output columns: all columns from customers
 queries[2] = """
 WITH    customer_flights AS (
-            SELECT *
+            SELECT *,age(flightdate + time '00:00', birthdate + time '00:00') AS flightage
             FROM customers NATURAL JOIN flewon
         )
 SELECT  DISTINCT customerid,
@@ -38,8 +38,8 @@ SELECT  DISTINCT customerid,
         birthdate,
         frequentflieron
 FROM    customer_flights
-WHERE   EXTRACT(MONTH FROM age(flightdate + time '00:00', birthdate + time '00:00')) = 11
-AND     EXTRACT(DAY FROM age(flightdate + time '00:00', birthdate + time '00:00')) >= 24
+WHERE   EXTRACT(MONTH FROM flightage) = 11
+AND     EXTRACT(DAY FROM flightage) >= 24
 ORDER BY name;
 """
 
