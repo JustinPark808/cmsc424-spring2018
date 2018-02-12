@@ -29,15 +29,16 @@ ORDER BY name;
 ### Order: by name 
 ### Output columns: all columns from customers
 queries[2] = """
-WITH    customer_flights AS (
-            SELECT *,age(flightdate + time '00:00', birthdate + time '00:00') AS flightage
-            FROM customers NATURAL JOIN flewon
+WITH    customers_flewon AS (
+            SELECT  *, 
+                    age(flightdate + time '00:00', birthdate + time '00:00') AS flightage
+            FROM    customers NATURAL JOIN flewon
         )
 SELECT  DISTINCT customerid,
         name,
         birthdate,
         frequentflieron
-FROM    customer_flights
+FROM    customers_flewon
 WHERE   EXTRACT(MONTH FROM flightage) = 11
 AND     EXTRACT(DAY FROM flightage) >= 24
 ORDER BY name;
@@ -48,7 +49,21 @@ ORDER BY name;
 ### Order: first by airport_city increasingly, then inbound_flights decreasingly, then airline_id increasingly.
 ### Note: You must generate the airport city names instead of airport codes.
 queries[3] = """
-select 0;
+WITH    airports_flights AS (
+            SELECT  city, 
+                    airlineid, 
+                    flightid
+            FROM    airports INNER JOIN flights ON airports.airportid = flights.dest
+        )
+SELECT  city        AS airport_city, 
+        airlineid   AS airline_id, 
+        count(*)    AS inbound_flights
+FROM    airports_flights
+GROUP BY city, 
+         airlineid
+ORDER BY city ASC, 
+         inbound_flights DESC,
+         airlineid ASC;
 """
 
 ### 4. Find the name of the customer who flew the most times with his/her frequent flier airline. For example, if customer X flew Delta (which is listed as X's frequent flier airline in the customers table) 100 times, and no other customer flew their frequent flyer airline more than 99 times, the only thing returned for this query is X's name.
@@ -56,7 +71,26 @@ select 0;
 ### Output: only the name of the customer. If multiple answers, return them all.
 ### Order: order by name.
 queries[4] = """
-select 0;
+WITH    customers_flewon_flights AS (
+            WITH    customers_flewon AS (
+                    SELECT *
+                    FROM customers NATURAL JOIN flewon
+            )
+            SELECT  *
+            FROM    customers_flewon NATURAL JOIN flights
+        ), frequentflier_count AS (
+            SELECT  name,
+                    count(*) AS count
+            FROM    customers_flewon_flights
+            WHERE   frequentflieron = airlineid
+            GROUP BY name
+        ), max_count AS (
+            SELECT  max(count) AS max_count
+            FROM    frequentflier_count
+        )
+SELECT  name
+FROM    frequentflier_count, max_count
+WHERE   count = max_count;
 """
 
 ### 5. Find all 1-stop flights from JFK to LAX having layover duration greater than or equal to 1 hour. 
