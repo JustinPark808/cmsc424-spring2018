@@ -404,55 +404,45 @@ ORDER BY
 ###       c) There may be tied flights at rank 20, if so, all flights ranked 20 need to be returned
 queries[10] = """
 WITH
-    flight_customers_per_day AS (
+    all_flewon AS (
         SELECT
-            flightid,
-            flightdate,
-            count(customerid) AS onboard_count
+            *
         FROM
             flewon
-        GROUP BY
-            flightid,
-            flightdate
-    ),
-    flight_avg_customers AS (
+        UNION
         SELECT
             flightid,
-            sum(onboard_count) / (
-                SELECT
-                    max(flightdate) - min(flightdate) + 1.0
-                FROM
-                    flewon
-            ) AS onboard_avg
+            NULL AS customerid,
+            NULL AS flightdate
         FROM
-            flight_customers_per_day
+            flights
+    ),
+    averages AS (
+        SELECT
+            flightid,
+            count(customerid) / 9.0 AS avg
+        FROM
+            all_flewon
         GROUP BY
             flightid
     ),
-    ranked_flights AS (
+    ranks AS (
         SELECT
             flightid,
-            onboard_avg,
-            (
-                SELECT
-                    count(*)
-                FROM
-                    flight_avg_customers AS b
-                WHERE
-                    b.onboard_avg > a.onboard_avg
-            ) + 1 AS flight_rank
+            rank() OVER (
+                ORDER BY avg DESC
+            )
         FROM
-            flight_avg_customers AS a
+            averages
     )
-SELECT
-    flightid,
-    flight_rank
-FROM
-    ranked_flights
-WHERE
-    flight_rank <= 20
-ORDER BY
-    flight_rank,
-    flightid
+    SELECT
+        *
+    FROM
+        ranks
+    WHERE
+        rank <= 20
+    ORDER BY
+        rank ASC,
+        flightid ASC
 ;
 """

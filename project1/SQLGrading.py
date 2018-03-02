@@ -22,9 +22,9 @@ interactive = args.interactive
 def match(x, y):
 	if type(x) != type(y):
 		return False
-	if type(x) is IntType or type(x) is BooleanType or type(x) is LongType:
+	if type(x) is int or type(x) is bool:
 		return x == y
-	if type(x) is FloatType:
+	if type(x) is float:
 		return (abs(x - y) < 0.01)
 	# Conver to string and compare
 	# print "Found type: {}".format(type(x))
@@ -62,10 +62,10 @@ def compareAnswers(ans, correct):
 
 	jaccard = sum((flattened_correct & flattened_ans).values()) * 1.0/sum((flattened_correct | flattened_ans).values())
 	if verbose:
-		print "------ Creating word counts and comparing answers ---------"
-		print flattened_correct 
-		print flattened_ans
-		print "Jaccard Coefficient: {}".format(jaccard) 
+		print("------ Creating word counts and comparing answers ---------")
+		print(flattened_correct)
+		print(flattened_ans)
+		print("Jaccard Coefficient: {}".format(jaccard))
 
 	if jaccard > 0.9:
 		if len(ans) == len(correct):
@@ -76,7 +76,7 @@ def compareAnswers(ans, correct):
 		return ("Score = 1: Somewhat similar answers", 1)
 	return ("Score = 0: Answers too different", 0)
 
-conn = psycopg2.connect("dbname=large_flights user=vagrant")
+conn = psycopg2.connect("dbname=large_flights user=justin")
 cur = conn.cursor()
 
 totalscore = 0
@@ -84,28 +84,28 @@ for i in range(1, 11):
 	# If a query is specified by -q option, only do that one
 	if args.query is None or args.query == i:
 		try:
-			print "========== Executing Query {}".format(i)
-			print queries[i]
+			print("========== Executing Query {}".format(i))
+			print(queries[i])
 			cur.execute(queries[i])
 			ans = cur.fetchall()
 
 			if verbose:
-				print "--------- Your Query Answer ---------"
+				print("--------- Your Query Answer ---------")
 				for t in ans:
-					print t
-				print "--------- Correct Answer ---------"
+					print(t)
+				print("--------- Correct Answer ---------")
 				for t in correctanswers[i]:
-					print t
+					print(t)
 
 			# Compare with correctanswers[i]
 			cmp_res = compareAnswers(ans, correctanswers[i])
-			print "-----> " + cmp_res[0]
+			print("-----> " + cmp_res[0])
 			totalscore += cmp_res[1]
 			if interactive:
 				raw_input('Press enter to proceed')
 				os.system('clear')
 		except:
-			print sys.exc_info()
+			print(sys.exc_info())
 			raise
 
-print "-----------------> Total Score = {}".format(totalscore)
+print("-----------------> Total Score = {}".format(totalscore))
