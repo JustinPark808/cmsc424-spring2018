@@ -2,12 +2,50 @@
 
 Explanation
 -----------
+This query will not produce the correct output when the customer has taken only
+one flight which has a source or destination of 'ORD' since the total grouped
+count will still be 1. This can be avoided by checking whether the customer's
+1 flight is NULL.
 
 
 
 
 SQL Query, if needed
 --------------------
+WITH
+    temp AS (
+        SELECT DISTINCT
+            cid,
+            v2.flightid AS afid
+        FROM
+            customer_flight AS v1
+        LEFT OUTER JOIN
+            flight_ORD AS v2
+        ON
+            v1.flightid = v2.flightid
+        ORDER BY
+            cid
+    )
+SELECT
+    cid
+FROM
+    temp
+GROUP BY
+    cid
+HAVING
+    count(*)=1
+AND
+    exists(
+        SELECT
+            afid
+        FROM
+            temp
+        WHERE
+            afid IS NULL
+    )
+ORDER BY
+    cid
+;
 
 
 
@@ -16,7 +54,27 @@ SQL Query, if needed
 
 PL/pgSQL Function
 -----------------
+CREATE TABLE finaltab(transid int, tcount int);
 
+CREATE OR REPLACE FUNCTION function1()
+
+RETURNS VOID AS $$
+DECLARE
+    rc record;
+    transid int;
+    tcount int;
+    prev_tcount int;
+BEGIN
+    transid = NULL;
+    tcount = 0;
+    prev_tcount = 0;
+
+    FOR rc IN SELECT * FROM inittab LOOP
+        tcount = rc.tcount + prev_tcount;
+        prev_tcount = rc.tcount;
+        INSERT INTO finaltab VALUES (transid, tcount);
+    END LOOP;
+END;
 
 
 
@@ -24,7 +82,52 @@ PL/pgSQL Function
 
 PL/pgSQL Function
 -----------------
+CREATE TABLE finaltabl2(transid int, tcount int);
 
+CREATE OR REPLACE FUNCTION function2()
+
+RETURNS VOID AS $$
+DECLARE
+    rc1 record;
+    rc2 record;
+    temp int;
+    transid int;
+    tcount int;
+    counter int;
+    diff int;
+BEGIN
+    transid = NULL;
+    tcount = 0;
+    counter = 0;
+    diff = 0;
+    
+    FOR rc1 IN SELECT * FROM inittab LOOP
+        diff = counter - rc1.transid;
+        
+        IF transid IS NULL THEN
+            tcount = rc1.tcount;
+        END IF;
+
+        IF transid IS NOT NULL THEN
+            tcount = rc1.tcount + tcount;
+        END IF;
+
+        IF diff > 0 THEN
+            FOR rc2 IN SELECT * FROM inittab LOOP
+                IF diff > 0 THEN
+                    tcount = tcount - rc2.tcount;
+                    diff = diff - 1;
+                END IF;
+            END LOOP;
+        END IF;
+
+        transid = rc1.transid;
+
+        INSERT INTO finaltabl2(transid, tcount) VALUES (transid, tcount);
+
+        counter = counter + 1;
+    END LOOP;
+END;
 
 
 

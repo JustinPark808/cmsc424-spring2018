@@ -1,4 +1,4 @@
-alter role vagrant with password 'vagrant';
+alter role justin;
 
 create table airports (airportid char(3) primary key, city char(20), name char(100), total2011 int, total2012 int);
 
