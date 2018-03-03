@@ -2,8 +2,8 @@ queries = ["" for i in range(0, 11)]
 
 ### 1.
 queries[1] = """
-SELECT
-    DISTINCT flights.flightid
+SELECT DISTINCT 
+    flights.flightid
 FROM
     flights
 RIGHT OUTER JOIN

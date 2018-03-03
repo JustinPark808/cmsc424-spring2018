@@ -1,56 +1,4 @@
-2. Answer to Q2
-
-Explanation
------------
-This query will not produce the correct output when the customer has taken only
-one flight which has a source or destination of 'ORD' since the total grouped
-count will still be 1. This can be avoided by checking whether the customer's
-single flight in the outer join is NULL.
-
-
-
-
-SQL Query, if needed
---------------------
-WITH
-    temp AS (
-        SELECT DISTINCT
-            cid,
-            v2.flightid AS afid
-        FROM
-            customer_flight AS v1
-        LEFT OUTER JOIN
-            flight_ORD AS v2
-        ON
-            v1.flightid = v2.flightid
-        ORDER BY
-            cid)
-SELECT
-    cid
-FROM
-    temp
-GROUP BY
-    cid
-HAVING
-    count(*)=1
-AND
-    exists(
-        SELECT
-            afid
-        FROM
-            temp
-        WHERE
-            afid IS NULL)
-ORDER BY
-    cid;
-
-
-
-
-3. Answer to Q3, Part I
-
-PL/pgSQL Function
------------------
+-- ******************** PART 1 ******************** 
 CREATE OR REPLACE FUNCTION function1() RETURNS VOID AS $$
     DECLARE
         rc          record;
@@ -71,13 +19,7 @@ CREATE OR REPLACE FUNCTION function1() RETURNS VOID AS $$
     END;
 $$ LANGUAGE plpgsql;
 
-
-
-
-3. Answer to Q3, Part II
-
-PL/pgSQL Function
------------------
+-- ******************** PART 2 ********************
 CREATE OR REPLACE FUNCTION function2() RETURNS VOID AS $$
     DECLARE
         rc1     record;
@@ -123,7 +65,3 @@ CREATE OR REPLACE FUNCTION function2() RETURNS VOID AS $$
         END LOOP;
     END;
 $$ LANGUAGE plpgsql;
-
-
-
-

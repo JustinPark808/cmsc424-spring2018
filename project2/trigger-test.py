@@ -37,3 +37,18 @@ print("After insertion")
 executePrint("select * from airlinesales")
 executePrint("select * from reportmin")
 
+print("Inserting a ticketsales entry for DL")
+cur.execute("insert into ticketsales values ('T7', 'DL119', 'cust2', to_date('2016-08-09', 'YYYY-MM-DD'))");
+conn.commit()
+
+print("After insertion")
+executePrint("select * from airlinesales")
+executePrint("select * from reportmin")
+
+print("Inserting a ticketsales entry for DL")
+cur.execute("insert into ticketsales values ('T8', 'DL119', 'cust2', to_date('2016-08-08', 'YYYY-MM-DD'))");
+conn.commit()
+
+print("After insertion")
+executePrint("select * from airlinesales")
+executePrint("select * from reportmin")
