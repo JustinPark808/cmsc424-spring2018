@@ -24,6 +24,10 @@ INSERT INTO ticketsales VALUES ('T8', 'SW102', 'cust1', date '2016-08-07');
 
 DELETE FROM ticketsales WHERE ticketid = 'T3';
 
+SELECT * FROM ticketsales;
+SELECT * FROM airlinesales;
+SELECT * FROM reportmin;
+
 -- ****** reportmin ******
 -- airlineid | salesdate  
 -------------+------------
@@ -35,3 +39,4 @@ DELETE FROM ticketsales WHERE ticketid = 'T3';
 -- UA        | 2016-08-10
 -- SW        | 2016-08-07
 -- AA        | 2016-08-10
+--(8 rows)
