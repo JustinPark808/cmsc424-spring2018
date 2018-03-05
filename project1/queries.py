@@ -179,7 +179,7 @@ WITH
         WHERE
             flightid NOT IN (
                 SELECT
-                    DISTINCT(flightid)
+                    flightid
                 FROM
                     flewon
                 WHERE
@@ -294,8 +294,8 @@ WITH
         FROM
             flights,
             (
-                SELECT
-                    DISTINCT flightdate
+                SELECT DISTINCT
+                    flightdate
                 FROM
                     flewon
             ) AS all_dates

@@ -78,6 +78,8 @@ CREATE OR REPLACE FUNCTION process_ticket_sale() RETURNS TRIGGER AS $$
 $$ LANGUAGE plpgsql;
 
 
+-- Create trigger to run process_ticket_sale() after an insertion or deletion
+-- on ticketsales
 DROP TRIGGER IF EXISTS process_ticket_sale ON ticketsales;
 CREATE TRIGGER process_ticket_sale
 AFTER INSERT OR DELETE ON ticketsales
