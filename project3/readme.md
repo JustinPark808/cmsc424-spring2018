@@ -10,6 +10,11 @@ To begin this project you will have to pull the project 3 folder from our git re
 
 * **build.sh**: you should run "sudo ./build.sh" in order for your project files to build. This will compile all the necessary files for the application. Make sure you run build as the root user **(sudo)** to have it copy the war file to the tomcat directory properly.
 
+You may encounter an issue with running sudo ./build.sh you are using Windows to edit build.sh. This might cause issues with carriage return characters and when you try to run it no command runs properly (the first line will be along the lines of "1: cd: can't cd to ./src"). If this happens, you can resolve this by doing the following:
+
+ - Download the program dos2unix on your vagrant machine with: sudo apt-get install dos2unix
+ - Run dos2unix build.sh in your vagrant command line
+
 * **src/**
 
     * ***.jsp**: These are the Java Server Pages. JSP allows Java code to be interleaved with static web markup content (HTML in our case), with the resulting page being compiled and executed on the server to deliver a complete HTML page. Basically Java is being used to dynamically create HTML pages. A good overview/tutorial on JSP can be found at: [https://www.tutorialspoint.com/jsp/jsp_overview.htm](https://www.tutorialspoint.com/jsp/jsp_overview.htm) (however, you can skip the parts of the tutorial on how to set up the enviornment, since we’ve already done that for you). It is a good idea to check out the other jsp files we are providing you, so that you can get a sense of how each page of the app is generated. **(Front-end Component)**
@@ -173,6 +178,8 @@ As of now, there are not that many attributes of a person that are useful in mat
 
 Please create some way for a user to specify the value of this field on the "add a person" page. You can model it just like any of the other input fields already there on the page. See the add.jsp file and its comments for exactly where to modify and insert the form field. Whatever field you decide to add, make sure you do not set a not null constraint on the person table for the field. You can see more about html form elements online here: [https://www.w3schools.com/html/html_form_elements.asp](https://www.w3schools.com/html/html_form_elements.asp)
 
+We have also added as a request that you make your attribute a string attribute and name your column in the table for it as "foo". You can and should make this represent whatever attribute you want it to, but to make things easier for testing we ask that you make it a string and name the column "foo". We won't deduct if you don't do this but we ask that we do to make testing faster and easier (and you can get your grade back faster). 
+
 Furthermore, you can modify the fields where the user can enter a gender and seeking\_gender so that the current menu of options correspond to real-world genders. The mapping of these options to integers for storage in the database is (and should remain) hidden from the end user. We certainly don't want to give end users any kind of impression that one gender has a higher value than another one! You will not be tested in any way on what genders you specify in the dropdown or what values they are mapped to. Feel free to make them as realistic or unrealistic as you wish.
 
 ## **Part 5: AddPerson.java: Back-end + Front-end (3 points)**
@@ -220,7 +227,7 @@ For the second servlet, make sure the url pattern is the same as the action fiel
 
 javac -classpath WEB-INF/lib/*:WEB-INF/classes -d WEB-INF/classes com/match/web/AddFeedback.java
 
-You may encounter an issue with running sudo ./build.sh you are using Windows to edit build.sh. This might cause issues with carriage return characters and when you try to run it no command runs properly (the first line will be along the lines of "1: cd: can't cd to ./src"). If this happens, you can resolve this by doing the following:
+As described earlier, you may encounter an issue with running sudo ./build.sh you are using Windows to edit build.sh. This might cause issues with carriage return characters and when you try to run it no command runs properly (the first line will be along the lines of "1: cd: can't cd to ./src"). If this happens, you can resolve this by doing the following:
 
  - Download the program dos2unix on your vagrant machine with: sudo apt-get install dos2unix
  - Run dos2unix build.sh in your vagrant command line
