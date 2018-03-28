@@ -108,9 +108,7 @@ WITH
             customer_flight_count_by_airline AS a,
             customers AS b
         WHERE
-            a.customerid = b.customerid
-        AND
-            a.airline_id = b.frequentflieron
+            (a.customerid, a.airline_id) = (b.customerid, b.frequentflieron)
 )
 SELECT
     name
