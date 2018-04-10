@@ -16,6 +16,7 @@
           <li><a href="people">People</a></li>
           <li><a href="generate">Find Matches</a></li>
           <li><a href="matches">View Matches</a></li>
+          <li><a href="feedback">Add Feedback</a></li>
         </ul>
       </div>
     </div>

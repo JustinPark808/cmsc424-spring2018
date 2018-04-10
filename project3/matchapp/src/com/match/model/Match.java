@@ -1,5 +1,7 @@
 package com.match.model;
 import java.sql.*;
+import java.util.List;
+import java.util.ArrayList;
 import java.lang.NullPointerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,16 +15,34 @@ public class Match {
 
     private int id1;
     private int id2;
+    private String date;
+    private int rating;
+
+    // TODO
+    public Match() {}
+
+    // TODO
+    public Match(int id1, int id2, String date, int rating) {
+        this.id1 = id1;
+        this.id2 = id2;
+        this.date = date;
+        this.rating = rating;
+    }
+
     /*
      * TODO: 
      * Each Match object corresponds to a row in the matches table
-     * Therefore, you should have one field in this class corresponding to each attribute of the matches table (id1, id2, etc).
-     * You should also write getter methods that returns the current value for each of these fields:
+     * Therefore, you should have one field in this class corresponding to
+     * each attribute of the matches table (id1, id2, etc).
+     * You should also write getter methods that returns the current value for
+     * each of these fields:
+     * 
      * getUserID(): Returns the value of the id1 field. --- this is optional
      * getMatchedID(): Returns the value of the id2 field --- this is required
      * getDate(): Returns the date of the match as a String --- this is required
-     * (This should follow string form of an java.sql.date object, which looks like yyyy-mm-dd).
-     * getRating(): Get the value of the rating field --this is required
+     * (This should follow string form of an java.sql.date object, which looks
+     * like yyyy-mm-dd).
+     * getRating(): Get the value of the rating field ---  this is required
      *
      * Also, you should write the getMatchesFor(String id) function (see below)
      *
@@ -32,36 +52,147 @@ public class Match {
 
     // TODO
     public int getUserID() {
-        return 0;
+        return id1;
     }
 
     // TODO
     public int getMatchedID() {
-        return 0;
+        return id2;
     }
 
     // TODO
     public String getDate() {
-        return "";
+        return date;
     }
 
     // TODO
     public double getRating() {
-        return 0;
+        return rating;
     }
 
     private static final Logger logger = LogManager.getLogger("match");
     static JsonFactory factory = new JsonFactory();
 
-    /* Return an array of Match objects that correspond to each match in the matches tables for which
-       the id1 value is equal to the id parameter of this method. 
-       Ignore any records in the matches table for which the id2 column is equal to the id parameter.
-       If id does not represent a person in the database or if the person with that id does not appear as id1 
-       in any matches, return an empty array. 
-       A person cannot match with his or her self and should be prevented from occurring. 
-       */
+    /* 
+     * Return an array of Match objects that correspond to each match in the
+     * matches tables for which the id1 value is equal to the id parameter of
+     * this method. Ignore any records in the matches table for which the id2
+     * column is equal to the id parameter. If id does not represent a person
+     * in the database or if the person with that id does not appear as id1 in
+     * any matches, return an empty array. A person cannot match with his or
+     * her self and should be prevented from occurring.
+     */
     public static Match[] getMatchesFor(String id) {
-        return new Match[]{}; // replace with your code
+        // TODO
+        con = getConnection();
+
+        // TODO
+        if (con == null) {
+            logger.warn("Connection Failed!");
+            return new Match[0];
+        }
+
+        // TODO
+        if (id.length() == 0) return new Match[0];
+
+        // TODO
+        List<Match> matches = new ArrayList<>();
+
+        // TODO
+        try {
+            // TODO
+            String pStmtStr =
+                "SELECT * " +
+                "FROM match " +
+                "WHERE id1 = ?";
+
+            // TODO
+            PreparedStatement pStmt = con.prepareStatement(pStmtStr);
+            pStmt.setInt(1, Integer.parseInt(id));
+            ResultSet rs = pStmt.executeQuery();
+
+            // TODO
+            while (rs.next()) {
+                // TODO
+                int id1 = rs.getInt("id1");
+                int id2 = rs.getInt("id2");
+                String date = rs.getString("date_of_match");
+                int rating = rs.getInt("rating");
+
+                // TODO
+                matches.add(new Match(id1, id2, date, rating));
+            }
+
+            return (Match[]) matches.toArray(new Match[matches.size()]);
+        } catch (SQLException sqle) {
+            logger.warn("getMatchesFor() Query Failed!");
+            logger.warn(sqle.getMessage());
+            return new Match[0];
+        }
+    }
+
+    /*
+     *
+     */
+    public static double addFeedback(int id1, int id2, int approval) {
+        con = getConnection();
+
+        // TODO
+        if (con == null) {
+            logger.warn("Connection Failed!");
+            return -1.0;
+        }
+
+        try {
+            // TODO
+            String pStmtStr =
+                "SELECT approval_rating " +
+                "FROM person " +
+                "WHERE id = ? " +
+                "AND ? IN ( " +
+                "   SELECT id1 " +
+                "   FROM match " +
+                ")";
+
+            // TODO
+            PreparedStatement pStmt = con.prepareStatement(pStmtStr);
+            pStmt.setInt(1, id2);
+            pStmt.setInt(2, id1);
+            ResultSet rs = pStmt.executeQuery();
+
+            // TODO
+            if (rs.next()) {
+                // TODO
+                double rating = rs.getDouble("approval_rating");
+                rating += (approval == 1 ? 1 : -1);
+                rating = Math.max(0.00, rating);
+                rating = Math.min(rating, 9.99);
+
+                // TODO
+                pStmtStr =
+                    "UPDATE person " +
+                    "SET approval_rating = ? " +
+                    "WHERE id = ?";
+
+                // TODO
+                pStmt = con.prepareStatement(pStmtStr);
+                pStmt.setDouble(1, rating);
+                pStmt.setInt(2, id2);
+                pStmt.execute();
+
+                return rating;
+            // TODO
+            } else {
+                logger.warn("Match Not Found!");
+
+                return -1.0;
+            }
+        } catch (SQLException sqle) {
+            logger.warn("adjustRating() Query Failed!");
+            logger.warn(sqle.getMessage());
+
+            return -1.0;
+        }
     }
 
     private static Connection getConnection() {
