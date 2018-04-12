@@ -124,7 +124,7 @@ public class FDFinder {
             "SELECT sum(cardinality) / count(cardinalities." + col1 + " ) + " +
             "       (1 + sum(consistency)) / (1 + count(consistencies." + col1 + " )) " +
             "       AS confidence " +
-            "FROM cardinalities NATURAL FULL OUTER JOIN consistencies ";
+            "FROM cardinalities NATURAL LEFT OUTER JOIN consistencies ";
 
         try {
             Statement s = c.createStatement();
